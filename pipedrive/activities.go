@@ -70,11 +70,19 @@ type ActivitiesReponse struct {
 	AdditionalData AdditionalData `json:"additional_data,omitempty"`
 }
 
+// StagesGetDealsInStageOptions specifices the optional parameters to the
+// StagesService.GetDealsInStage method.
+type ActivitiesListOptions struct {
+	UserID uint `url:"user_id"`
+	Start  uint `url:"start"`
+	Limit  uint `url:"limit"`
+}
+
 // List returns all activities assigned to a particular user
 //
 // https://developers.pipedrive.com/docs/api/v1/#!/Activities/get_activities
-func (s *ActivitiesService) List(ctx context.Context) (*ActivitiesReponse, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, "/activities", nil, nil)
+func (s *ActivitiesService) List(ctx context.Context, opts *ActivitiesListOptions) (*ActivitiesReponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, "/activities", opts, nil)
 
 	if err != nil {
 		return nil, nil, err
@@ -143,11 +151,22 @@ type ActivitiesCreateOptions struct {
 	DueDate      string      `json:"due_date,omitempty"`
 	DueTime      string      `json:"due_time,omitempty"`
 	Duration     string      `json:"duration,omitempty"`
+	Location     string      `json:"location,omitempty"`
+	Description  string      `json:"public_description,omitempty"`
+	Note         string      `json:"note,omitempty"`
 	UserID       uint        `json:"user_id,omitempty"`
-	DealID       uint        `json:"user_id,omitempty"`
+	DealID       uint        `json:"deal_id,omitempty"`
 	PersonID     uint        `json:"person_id,omitempty"`
 	Participants interface{} `json:"participants,omitempty"`
 	OrgID        uint        `json:"org_id,omitempty"`
+}
+
+func (a *ActivitiesCreateOptions) Create(ctx context.Context, client *Client) (int, error) {
+	res, _, err := client.Activities.Create(ctx, a)
+	if err != nil {
+		return 0, err
+	}
+	return res.Data.ID, nil
 }
 
 // Update an activity

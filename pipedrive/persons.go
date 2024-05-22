@@ -170,6 +170,14 @@ type PersonCreateOptions struct {
 	Label     uint      `json:"label"`
 }
 
+func (p *PersonCreateOptions) Create(ctx context.Context, client *Client) (int, error) {
+	res, _, err := client.Persons.Create(ctx, p)
+	if err != nil {
+		return 0, err
+	}
+	return res.Data.ID, nil
+}
+
 // Create a new person.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Persons/post_persons

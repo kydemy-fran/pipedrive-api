@@ -74,6 +74,10 @@ type Organization struct {
 	Phone                           string      `json:"3eb8874b7a3c9f3fe4f5b6435d4d009b15ec0c77"`
 }
 
+func (o Organization) GetID() int {
+	return o.ID
+}
+
 func (o Organization) String() string {
 	return Stringify(o)
 }
@@ -221,6 +225,14 @@ type OrganizationCreateOptions struct {
 	VisibleTo VisibleTo `json:"visible_to"`
 	AddTime   Timestamp `json:"add_time"`
 	Label     uint      `json:"label"`
+}
+
+func (o *OrganizationCreateOptions) Create(ctx context.Context, client *Client) (int, error) {
+	orgRes, _, err := client.Organizations.Create(ctx, o)
+	if err != nil {
+		return 0, err
+	}
+	return orgRes.Data.ID, nil
 }
 
 // Create a new organizations.

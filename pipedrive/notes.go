@@ -92,13 +92,23 @@ func (s *NotesService) GetByID(ctx context.Context, id int) (*NoteResponse, *Res
 // NoteCreateOptions specifices the optional parameters to the
 // NotesService.Create method.
 type NoteCreateOptions struct {
-	DealID                   uint   `json:"deal_id"`
-	Content                  string `json:"content"`
-	PersonID                 uint   `json:"person_id"`
-	OrgID                    uint   `json:"org_id"`
-	PinnedToDealFlag         uint8  `json:"pinned_to_deal_flag"`
-	PinnedToOrganizationFlag uint8  `json:"pinned_to_organization_flag"`
-	PinnedToPersonFlag       uint8  `json:"pinned_to_person_flag"`
+	DealID                   uint      `json:"deal_id"`
+	Content                  string    `json:"content"`
+	PersonID                 uint      `json:"person_id"`
+	OrgID                    uint      `json:"org_id"`
+	UserID                   uint      `json:"user_id"`
+	AddTime                  Timestamp `json:"add_time"`
+	PinnedToDealFlag         uint8     `json:"pinned_to_deal_flag"`
+	PinnedToOrganizationFlag uint8     `json:"pinned_to_organization_flag"`
+	PinnedToPersonFlag       uint8     `json:"pinned_to_person_flag"`
+}
+
+func (n *NoteCreateOptions) Create(ctx context.Context, client *Client) (int, error) {
+	res, _, err := client.Notes.Create(ctx, n)
+	if err != nil {
+		return 0, err
+	}
+	return res.Data.ID, nil
 }
 
 // Create a note.
